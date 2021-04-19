@@ -10,12 +10,16 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using AspNetCore.Reporting;
+using System.Data.Odbc;
+using System.Data;
+using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
 
 namespace CoreReport.Controllers
 {
     public class ReportingController : Controller
     {
+
         private ApplicationDbContext dbContext = new ApplicationDbContext();
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -81,22 +85,37 @@ namespace CoreReport.Controllers
 
         public async Task<IActionResult> Print(ReportingViewModel model)
         {
+            DataSet dataSet = new DataSet();
+            MySqlConnection con = new MySqlConnection("Data Source=localhost;Initial Catalog =ejabeda_habro;user id=root;password=asdf@1234");
+            var cmd1 = new MySqlCommand(model.Qryname, con);
+            foreach (var paramerte in model.Parameters)
+            {
+                var parm = new MySqlParameter();
+                if (paramerte.Key.ToLower().Contains("date"))
+                {
+                    //2021 - 04 - 01
+                    parm.ParameterName = paramerte.Key;
+                    parm.Value = Convert.ToDateTime(paramerte.Value).ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    parm.ParameterName = paramerte.Key;
+                    parm.Value = paramerte.Value;
+                }
+                cmd1.Parameters.Add(parm);
+            }
             string mimtype = "";
             int extension = 1;
             var path = $"{_webHostEnvironment.WebRootPath}\\Reports\\" + model.ReportPath;
 
             LocalReport localReport = new LocalReport(path);
-            var result = localReport.Execute(RenderType.Excel, extension, model.Parameters, mimtype);
+
+            var rDs = new DataSet();
+            var adp = new MySqlDataAdapter(cmd1);
+            adp.Fill(rDs, model.Qryname);
+            localReport.AddDataSource(model.xmlTableName, rDs.Tables[0]);
+            var result = localReport.Execute(RenderType.Pdf, extension, model.Parameters, mimtype);
             return File(result.MainStream, "application/pdf");
         }
     }
 }
-
-//string name = null;
-//int? id = null;
-//SqlParameter[] param = new SqlParameter[]{
-//                new SqlParameter("@id",id??(object)DBNull.Value),
-//                new SqlParameter("@name",name??(object)DBNull.Value)
-//            };
-//var data = dbContext.Database.q<PostDetail>("GetDataByIdName @id,@name", param).ToList();
-//return View(data);

@@ -7,8 +7,9 @@
       <ConnectionProperties>
         <DataProvider>ODBC</DataProvider>
         <ConnectString>Dsn=OdbcUnicodeMysql64</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
       </ConnectionProperties>
-      <rd:SecurityType>DataBase</rd:SecurityType>
+      <rd:SecurityType>Integrated</rd:SecurityType>
       <rd:DataSourceID>f88d6ae8-c927-4bb4-9a9a-6f65f486f7d7</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -16,16 +17,8 @@
     <DataSet Name="TrialBalanceDataSet">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
-        <QueryParameters>
-          <QueryParameter Name="?">
-            <Value>=Parameters!Parameter1.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="?">
-            <Value>=Parameters!Parameter2.Value</Value>
-          </QueryParameter>
-        </QueryParameters>
-        <CommandText>SELECT tran_details.batch_no,tran_details.gl_acc_code,SUM(tran_details.dr_amt_loc) as dr_amt_loc ,tran_details.tran_date,tran_details.tran_mode,tran_details.description,SUM(tran_details.cr_amt_loc) as cr_amt_loc,gl_acc_code.acc_head,gl_acc_code.acc_code FROM tran_details JOIN gl_acc_code WHERE tran_details.gl_acc_code=gl_acc_code.acc_code  AND (tran_details.tran_date BETWEEN ? AND ?) GROUP BY tran_details.gl_acc_code 
-ORDER BY tran_details.gl_acc_code</CommandText>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>ejabeda_habro.rptGetTrialBalanceDatas</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -164,7 +157,7 @@ ORDER BY tran_details.gl_acc_code</CommandText>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=FORMAT(Parameters!Parameter1.Value,"yyyy-MM-dd")+" To "+FORMAT(Parameters!Parameter2.Value,"yyyy-MM-dd")</Value>
+                    <Value>=FORMAT(Parameters!FromDate.Value,"yyyy-MM-dd")+" To "+FORMAT(Parameters!ToDate.Value,"yyyy-MM-dd")</Value>
                     <Style>
                       <FontFamily>Arial</FontFamily>
                     </Style>
@@ -1022,13 +1015,13 @@ ORDER BY tran_details.gl_acc_code</CommandText>
     </ReportSection>
   </ReportSections>
   <ReportParameters>
-    <ReportParameter Name="Parameter1">
+    <ReportParameter Name="FromDate">
       <DataType>DateTime</DataType>
-      <Prompt>Parameter1</Prompt>
+      <Prompt>FromDate</Prompt>
     </ReportParameter>
-    <ReportParameter Name="Parameter2">
+    <ReportParameter Name="ToDate">
       <DataType>DateTime</DataType>
-      <Prompt>Parameter2</Prompt>
+      <Prompt>ToDate</Prompt>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
@@ -1039,12 +1032,12 @@ ORDER BY tran_details.gl_acc_code</CommandText>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
           <RowIndex>0</RowIndex>
-          <ParameterName>Parameter1</ParameterName>
+          <ParameterName>FromDate</ParameterName>
         </CellDefinition>
         <CellDefinition>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>0</RowIndex>
-          <ParameterName>Parameter2</ParameterName>
+          <ParameterName>ToDate</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>
