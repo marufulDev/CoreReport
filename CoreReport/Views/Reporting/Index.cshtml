@@ -1,0 +1,84 @@
+﻿@model CoreReport.ViewModels.ReportingViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<link href="~/Content/App/treeView.css" rel="stylesheet" />
+<link href="~/CommonDesign/commonBootStrap.css" rel="stylesheet" />
+
+<div class="side-app">
+    <!-- Row -->
+    <div class="row">
+        <div class="col-md-6 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Reports List</h3>
+                    </div>
+                </div>
+                <div class="card-body" style="max-height:100% !important">
+                    <div class="table-responsive">
+                        <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    @foreach (var firstLevel in Model.ReportingTreeViews)
+                                    {
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <a></a><span>&nbsp;&nbsp;</span>
+                                            <span style="font-weight: 400;font-size: 14px;">
+
+                                                <a class="showReportParameterFor" action="@Url.Action("ReportView", "Reporting", new { SlNo = firstLevel.SlNo })">@firstLevel.ReportName [@firstLevel.SlNo]</a>
+                                            </span>
+                                        </li>
+                                        @*@foreach (var secondLevel in firstLevel.ReportingTrees)
+        {
+            <li class="list-group-item">
+                <a></a><span>&nbsp;&nbsp;</span>
+                <span style="font-weight: 400;font-size: 14px;">
+
+                    <a class="showReportParameterFor" action="@Url.Action("ReportView", "Reporting", new { SlNo = secondLevel.SlNo })">@secondLevel.ReportName [@secondLevel.SlNo]</a>
+                </span>
+            </li>
+        }*@
+                                    </ul>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">Report Parameter</h3>
+                    </div>
+                </div>
+                <div class="card-body" style="max-height:100% !important">
+                    <div class="table-responsive">
+                        <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <div class="pull-left" id="reportContainner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/Scripts/APP/treeView.js"></script>
+    <script type="text/javascript">
+        $('.showReportParameterFor').click(function () {
+            var url = $(this).attr('action');
+            $('#reportContainner').load(url);
+        });
+    </script>
+}
