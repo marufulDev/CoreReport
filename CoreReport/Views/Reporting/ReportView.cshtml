@@ -4,10 +4,7 @@
     //Layout = "~/Views/Shared/_Layout.cshtml";
     Layout = null;
 }
-<link href="~/CommonDesign/commonBootStrap.css" rel="stylesheet" />
-<link href="~/Content/Popup/jquery-ui.min.css" rel="stylesheet" />
-<script src="~/Content/Popup/jquery-1.7.1.min.js"></script>
-<script src="~/Content/Popup/jquery-ui-1.8.20.min.js"></script>
+<link href="~/css/datepicker.css" rel="stylesheet" />
 @using (Html.BeginForm("AspReport", "Reporting", FormMethod.Post, new { @class = "Reporting", target = "_blank" }))
 {
     @Html.HiddenFor(x => x.SlNo)
@@ -25,11 +22,9 @@
                         {
                             <div class="col-sm-6 col-lg-6">
                                 <div class="form-group">
-                                    <label class="col-md-4">@Html.Label(par.Key)</label>
                                     <div class="col-md-8">
-
-                                        @Html.TextBoxFor(x => x.Parameters[par.Key], "{0: dd MMMM yyyy}", new { @class = "textBoxsize form-control lrefFrom datepicker", placeholder = "Enter Date" })
-                                    </div>
+                                            @Html.TextBoxFor(x => x.Parameters[par.Key], new { @class = "textBoxsize form-control lrefFrom datepicker", placeholder = "Enter Date" })
+                                        </div>
                                 </div>
                             </div>
 
@@ -59,20 +54,14 @@
     </div>
 
     <br />
-
 }
-@section Scripts
-    {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/js/bootstrap-datepicker.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
-    <script>
-        $(function () {
-            $('.datepicker').datetimepicker();
-        });
-    </script>
-}
+<script type="text/javascript">
+    $('.datepicker').datepicker({
+        dateFormat: "yyyy-MM-dd",
+        changeMonth: true,
+        changeYear: true,
+        autoHide: true
+    });
+</script>
