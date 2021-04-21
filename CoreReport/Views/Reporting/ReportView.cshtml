@@ -5,63 +5,58 @@
     Layout = null;
 }
 <link href="~/css/datepicker.css" rel="stylesheet" />
+<script src="~/js/bootstrap-datepicker.js"></script>
+
 @using (Html.BeginForm("AspReport", "Reporting", FormMethod.Post, new { @class = "Reporting", target = "_blank" }))
 {
     @Html.HiddenFor(x => x.SlNo)
+    @Html.HiddenFor(x => x.ReportName)
     @Html.HiddenFor(x => x.ReportPath)
     @Html.HiddenFor(x => x.Qryname)
     @Html.HiddenFor(x => x.xmlTableName)
     <h5>@Model.ReportName</h5>
     <div class="row">
-        <div class="col-sm-12">
-            <div class="form-group">
-                <div class="col-md-12">
-                    @foreach (var par in Model.Parameters)
-                    {
-                        if (par.Key.ToLower().Contains("date"))
-                        {
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="form-group">
-                                    <div class="col-md-8">
-                                            @Html.TextBoxFor(x => x.Parameters[par.Key], new { @class = "textBoxsize form-control lrefFrom datepicker", placeholder = "Enter Date" })
-                                        </div>
-                                </div>
-                            </div>
-
-                        }
-                        else
-                        {
-                            <div>
-                                @Html.Label(par.Key)
-                            </div>
-                            <div>
-                                @Html.TextBoxFor(x => x.Parameters[par.Key], new { @class = "textBoxsize form-control" })
-                            </div>
-                        }
-                    }
+        @foreach (var par in Model.Parameters)
+        {
+            if (par.Key.ToLower().Contains("date"))
+            {
+                <div class="col-lg-6">
+                    <label class="custom-label">@Html.Label(par.Key)</label>
+                    @Html.TextBoxFor(x => x.Parameters[par.Key], new { @class = "datepicker textBoxsize form-control", placeholder = "Enter Date...." })
+                    <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
                 </div>
-            </div>
-        </div>
+            }
+            else
+            {
+                <div>
+                    @Html.Label(par.Key)
+                </div>
+                <div>
+                    @Html.TextBoxFor(x => x.Parameters[par.Key], new { @class = "textBoxsize form-control" })
+                </div>
+            }
+        }
     </div>
-    <div class="row">
+    <div class="row" style="padding-top:20px;">
         <div class="col-sm-12">
             <div class="form-group">
-                <div class="col-md-3">
-                    <input type="submit" value="Print" formmethod="post" formaction="Reporting/Print" />
-                </div>
+                <input name="submit" type="submit" id="submit" class="btn btn-info" value="Preview / Print" formaction="Reporting/Print" />
+                <input name="submit" type="submit" id="submit" class="btn btn-info" value="Pdf" formaction="Reporting/Print" />
+                <input name="submit" type="submit" id="submit" class="btn btn-info" value="Word" formaction="Reporting/Print" />
+                <input name="submit" type="submit" id="submit" class="btn btn-info" value="Excel" formaction="Reporting/Print" />
             </div>
         </div>
     </div>
 
     <br />
 }
-<script src="~/js/bootstrap-datepicker.js"></script>
 
 <script type="text/javascript">
     $('.datepicker').datepicker({
         dateFormat: "yyyy-MM-dd",
         changeMonth: true,
         changeYear: true,
-        autoHide: true
+        autoHide: true,
+
     });
 </script>

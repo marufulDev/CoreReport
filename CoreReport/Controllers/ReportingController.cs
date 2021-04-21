@@ -19,7 +19,6 @@ namespace CoreReport.Controllers
 {
     public class ReportingController : Controller
     {
-
         private ApplicationDbContext dbContext = new ApplicationDbContext();
         private readonly IWebHostEnvironment _webHostEnvironment;
 
@@ -37,11 +36,6 @@ namespace CoreReport.Controllers
 
         public ActionResult ReportView(ReportingViewModel model)
         {
-            //string BankCode = PortalContext.CurrentUser.BankCode.Trim();
-
-            //Select * from Reporting
-
-            //Reporting reportingObj = _reportingManager.GetReportParameterBySlNo(model.SlNo) ?? new Reporting();
             Reporting reportingObj = dbContext.Reportings.Where(x => x.SlNo == model.SlNo).FirstOrDefault();
             model.ReportPath = reportingObj.ReportPath;
             model.Qryname = reportingObj.Qryname;
@@ -83,9 +77,10 @@ namespace CoreReport.Controllers
             return Redirect("~/Reports/TreeReportViwer.aspx");
         }
 
-        public async Task<IActionResult> Print(ReportingViewModel model)
+        public async Task<IActionResult> Print(ReportingViewModel model, string submit)
         {
             DataSet dataSet = new DataSet();
+
             MySqlConnection con = new MySqlConnection("Data Source=localhost;Initial Catalog =ejabeda_habro;user id=root;password=asdf@1234");
             var cmd1 = new MySqlCommand(model.Qryname, con);
             foreach (var paramerte in model.Parameters)
@@ -93,7 +88,6 @@ namespace CoreReport.Controllers
                 var parm = new MySqlParameter();
                 if (paramerte.Key.ToLower().Contains("date"))
                 {
-                    //2021 - 04 - 01
                     parm.ParameterName = paramerte.Key;
                     parm.Value = Convert.ToDateTime(paramerte.Value).ToString("yyyy-MM-dd");
                 }
@@ -114,8 +108,26 @@ namespace CoreReport.Controllers
             var adp = new MySqlDataAdapter(cmd1);
             adp.Fill(rDs, model.Qryname);
             localReport.AddDataSource(model.xmlTableName, rDs.Tables[0]);
-            var result = localReport.Execute(RenderType.Pdf, extension, model.Parameters, mimtype);
-            return File(result.MainStream, "application/pdf");
+            if (submit == "Word")
+            {
+                var result = localReport.Execute(RenderType.Word, extension, model.Parameters, mimtype);
+                return File(result.MainStream, "application/msword", model.ReportName + ".doc");
+            }
+            else if (submit == "Excel")
+            {
+                var result = localReport.Execute(RenderType.Excel, extension, model.Parameters, mimtype);
+                return File(result.MainStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", model.ReportName + ".xlsx");
+            }
+            else if (submit == "Pdf")
+            {
+                var result = localReport.Execute(RenderType.Pdf, extension, model.Parameters, mimtype);
+                return File(result.MainStream, "application/pdf", model.ReportName + ".pdf");
+            }
+            else
+            {
+                var result = localReport.Execute(RenderType.Pdf, extension, model.Parameters, mimtype);
+                return File(result.MainStream, "application/pdf");
+            }
         }
     }
 }
